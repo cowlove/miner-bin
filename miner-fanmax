@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Sets the listed devices' fans to manual PWM mode, with a PWM value 
+# of 190, which seems about right to keep the cards very cool without
+# a lot of noise
+#
+# Probably needs to be run as root
+#
+# sudo miner-fanmax 1 2 4 5
+
+
 for f in $@; do
 	echo 1 >  /sys/class/drm/card$f/device/hwmon/hwmon$f/pwm1_enable
 	echo 190 > /sys/class/drm/card$f/device/hwmon/hwmon$f/pwm1
