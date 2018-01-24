@@ -1,0 +1,96 @@
+#!/usr/bin/perl
+# Animate live data using gnuplot
+# usage: gnuplotDataVis [gnuplot-using-spec] < data
+# use 'f' for data file in plotspec
+# eg: cat /dev/random | gnuplotDataVis --preplot 'set title "TI";' --plotspec 'f u 1 w l title "whatev", f u 2 ax x1y2"
+# eg: cat /dev/ttyAMA0 | gnuplotDataVis --plotspec 'f u 1'
+
+$minutes = 240;
+$period = 14800;
+$nrMiners = 4;
+$ymax = 6000;
+$y2max = 12000;
+
+#$ytic = 500; $y2tic = $ytic * $y2max/$ymax; 
+$y2tic = 1000; $ytic = $y2tic * $ymax/$y2max; 
+
+$plotSpec = 'f u 1';
+$preplot = 'set style data line; set title "TITLE"';
+while(1) { 
+	if ($ARGV[0] =~ /--minutes/) {
+		shift;
+		$minutes = shift;
+	}
+	if ($ARGV[0] =~ /--hours/) {
+		shift;
+		$minutes = shift * 60;
+	}
+	if ($ARGV[0] =~ /--rms/) {
+		$showRms = 1;
+		shift;
+	} elsif ($ARGV[0] =~ /--waitfull/) {
+		$waitFull = 1;
+		shift;
+	} elsif ($ARGV[0] =~ /--period/) {
+		shift;
+		$period = shift;
+	} elsif ($ARGV[0] =~ /--plotspec/) {
+		shift;
+		$plotSpec = shift;
+	} elsif ($ARGV[0] =~ /--preplot/) {
+		shift;
+		$preplot = shift;
+	} else {
+		last;
+	}
+}
+#$period = $minutes * 10;
+
+open GNUPLOT, "|gnuplot";
+	{ my $ofh = select GNUPLOT;
+	  $| = 1;
+	  select $ofh;
+	}
+print GNUPLOT "set term wxt size 1320,800 noraise;";
+#print GNUPLOT "set term png size 1320,800; set output 'out.png';";
+print GNUPLOT "xmm=0;f=\"-\"; set autoscale xfix; $preplot\n";
+
+
+$tmpfile="/tmp/minervis.$$.dat";
+$count = 1;
+while(1) { 
+	system("ssh up \"tail -$period watchdog.out | grep RATE | uniq \" | miner_cclog_parser.pl > $tmpfile");
+	print GNUPLOT " set format x ''; set key off; set style data l; \n";
+	print GNUPLOT " set ytic $ytic; set y2tic $y2tic; set xtic 3600;\n";
+	print GNUPLOT " set grid ytic y2tic xtic;\n";
+	print GNUPLOT " set style fill transparent solid 0.5 noborder;\n";
+	print GNUPLOT "set xlabel 'HOURS'; set ylabel 'Per-Miner Hash/Sec'; set y2label 'TOTAL Hash/Sec';\n";
+	print GNUPLOT "p ";
+	print GNUPLOT "[*:*][0:$ymax][*:*][0:$y2max] ";
+	
+	# print summation in the form "lasty2=($2+$3+$4....+0)"  for as many miners as we have
+	print GNUPLOT "'$tmpfile' u (lastx=\$1):(lasty2=";
+	foreach $m (2 .. $nrMiners + 1) { print GNUPLOT "\$$m+"; }  
+	print GNUPLOT "0) ax x1y2 lt rgb 'gold' w filledcurve x1, ";
+
+	foreach $m (2 .. $nrMiners + 1) { 
+		print GNUPLOT "'$tmpfile' u 1:(last$m = \$$m ) lw 2, ";
+	}
+	print GNUPLOT "0;\n";
+
+	print GNUPLOT "set label 1 sprintf('\%.1f', lasty2) at lastx*.8, sec lasty2 right offset 0,1 font ',20';  \n";
+	#print GNUPLOT "set title sprintf('Station #33 Miner Production \%s \%f', strftime('\%a \%b \%d \%H:\%M:\%S \%Y', time(0)), lasty2) font ',20';\n";
+	print GNUPLOT "set title 'STATION 33 CHLOE MINER PRODUCTION REPORT';";
+	foreach $m (2 .. $nrMiners + 1) { 
+		print GNUPLOT "set label $m sprintf('\%s \%.1f','miner" . ($m-1) . "',last$m) at lastx,last$m right offset -1,-.5 font ',+15';  \n";
+	}
+
+	#print GNUPLOT "set y2tic add (lasty,lasty);";
+
+	print GNUPLOT "set output 'out2.png'; replot;\n";
+	sleep 10;
+	$count = $count + 1;
+}	
+
+
+
