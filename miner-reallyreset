@@ -1,4 +1,11 @@
 #!/bin/sh -x
+#
+# Issue MQTT commands to the appropriate sonoff switch
+# to reset the specified miner
+# eg: miner-reset 1   or miner-reset miner1
+
+
+
 M=`miner-name $1`
 mosquitto_pub -t cmnd/sonoff_$M/power -m off;
 mosquitto_pub -t cmnd/sonoff_$M/power2 -m off;

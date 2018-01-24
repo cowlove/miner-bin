@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Show raw temp values for AMD style cards
+
 for f in /sys/class/drm/card?/device/hwmon/hwmon?/temp1_input; do
 	echo -n "$f:  "
 	cat $f
