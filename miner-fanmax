@@ -1,0 +1,8 @@
+#!/bin/bash
+
+for f in $@; do
+	echo 1 >  /sys/class/drm/card$f/device/hwmon/hwmon$f/pwm1_enable
+	echo 190 > /sys/class/drm/card$f/device/hwmon/hwmon$f/pwm1
+done
+ 
+

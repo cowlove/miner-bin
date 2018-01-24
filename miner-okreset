@@ -1,0 +1,5 @@
+#!/bin/bash
+
+ssh up rm -f /tmp/`hostname`.no-reset
+ssh up ls -l /tmp/`hostname`.no-reset
+

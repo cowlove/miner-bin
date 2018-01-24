@@ -1,0 +1,17 @@
+#!/bin/bash
+
+while ps -eo comm | grep ethminer; do
+  echo Killing ethminer... 
+  killall ethminer
+  sleep 1
+done
+
+
+while ps -eo comm | grep xmr-stak; do 
+  echo Killing xmr-stak...
+  killall xmr-stak
+  sleep 1
+done
+
+miner-startup
+

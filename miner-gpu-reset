@@ -1,0 +1,10 @@
+#!/bin/bash -x
+# 
+# Reset AMD gpus
+
+killall ethminer xmr-stak
+sleep 2
+killall -9 ethminer xmr-stak
+sleep 2
+
+sudo bash -c 'cat /sys/kernel/debug/dri/?/amdgpu_gpu_reset'

@@ -1,0 +1,13 @@
+#!/bin/bash -x 
+
+rw
+cd /ro/home/jim
+scp miner3:miner-packsrc.tgz .
+tar xzf miner-packsrc.tgz 
+cd src/xmr-stak/build
+make
+miner-kill
+cp bin/* /ro/home/jim/bin/
+scp miner3:config.txt /ro/home/jim
+scp miner3:config.txt /home/jim
+miner-xmrstak

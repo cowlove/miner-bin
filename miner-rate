@@ -1,0 +1,5 @@
+#!/bin/bash
+
+wget -q -O - http://$1:8088| \
+	perl -ne 'if (m|Totals:</th><td> ([0-9.]+)|){print "$1\n";}'
+

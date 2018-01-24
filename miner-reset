@@ -1,8 +1,12 @@
 #!/bin/sh -x
-M=`miner-name $1`
-if ! [ -f /tmp/$M.no-reset ]; then 
-	miner-reallyreset $M
+#ssh jim-miner sudo reboot
+#sleep 10
+
+if ! [ -f /tmp/$1.no-reset ]; then 
+	mosquitto_pub -t cmnd/sonoff_$1/power -m off;
+	sleep 10;
+	mosquitto_pub -t cmnd/sonoff_$1/power -m on
 else 
-	echo Not rebooting because of /tmp/$M.no-reset
+	echo Not rebooting because of /tmp/$1.no-reset
 fi 
 

@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# script to pack up all relevant miner source files, for sending to another
+# machine
+
+out=miner-packsrc.tgz
+
+cd
+find src/xmr-stak -name '*.?pp' -print | xargs tar -vczf miner-packsrc.tgz \
+	bin/miner-* 
+
+
+ls -l $out 

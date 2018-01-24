@@ -1,0 +1,41 @@
+#!/bin/bash
+#  Initial startup script called from /etc/rc.local
+#  It must immediately return, or rc.local will get hung up
+#
+#  Starts screen(1) sessions to run miners
+
+ 
+ps -eo comm | grep xmr-stak && echo 'xmr-stak is running, what are you doing?' && exit
+
+XMRSTAK="/home/jim/bin/xmr-stak"
+
+cd /home/jim/
+#echo startup running > out.log
+
+
+
+#while ! clinfo | grep AMD>/dev/null; do sleep 1; done; 
+#echo clinfo found >> out.log
+
+rm -f amd.txt; 
+
+echo starting screen >> out.log
+
+# Edit xmr-stack config.txt to refer to current miner
+sed -ie "s/miner[0-9]/`hostname`/g" config.txt  
+sync
+
+screen -dm -S xmr-stak script -af out.log -c "
+	lspci | grep VGA
+	for t in ; do 
+	 	echo throttle \$t:
+		$XMRSTAK --throttle \$t --exitSeconds 120 
+	done
+	$XMRSTAK
+"
+
+#bin/miner-switch-to-part-ethminer
+
+
+
+

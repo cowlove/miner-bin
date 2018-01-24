@@ -1,0 +1,34 @@
+#!/bin/bash -x
+
+
+while ps -eo comm | grep xmr-stak; do 
+  echo Killing xmr-stak
+  killall xmr-stak
+  sleep 1
+done
+
+cd /home/jim
+cp amd.txt.ONLY_RX550 amd.txt
+screen -dm -S xmr script -af out.log -c bin/xmr-stak 
+#screen -dm -S ethminer script -af out2.log -c "src/ethminer/build/ethminer/ethminer -G -SP 1 -S ella.pool.sexy:7007 -O 0xE2691ea3d7D810caa426Fd8A0725CdF665c89533 --opencl-devices 1 2 4 5 --cl-parallel-hash 4" 
+
+
+# Failover pool currently doesn't work, because ella.pool.sexy needs -SP 1, while nicehash needs -SP 2
+#
+sudo bin/miner-fanmax 1 2 3 4
+screen -dm -S ethminer script -af out2.log -c "
+	src/ethminer/build/ethminer/ethminer -SP 2 -G \
+	-S daggerhashimoto.usa.nicehash.com:3353 \
+	-O 3Eu4czVFQfGe3XahniEFFU2M7FG1wsAmX2 \
+	-SF ella.pool.sexy:7007 \
+	-FO 0xE2691ea3d7D810caa426Fd8A0725CdF665c89533 \
+	-HWMON \
+	--api-port 13333 \
+        --cl-local-work 128 \
+        --cl-global-work 8192 \
+	--cl-parallel-hash 2 \
+	--opencl-devices 3 
+"
+
+
+

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Wrapper to run xmrstak in a screen, with local parameters and with
+# an optional rampup loop
+# 
+# Called by miner-startup
+
+XMRSTAK=/home/jim/bin/xmr-stak
+cd $HOME
+
+ps -eo comm | grep xmr-stak && echo 'xmr-stak is running, what are you doing?' && exit
+
+export GPU_FORCE_64BIT_PTR=1
+export GPU_USE_SYNC_OBJECTS=1
+export GPU_MAX_ALLOC_PERCENT=100
+export GPU_SINGLE_ALLOC_PERCENT=100
+export GPU_MAX_HEAP_SIZE=100
+
+screen -dm -S xmr-stak script -af out.log -c "
+	lspci | grep VGA
+	for t in ; do 
+	 	echo throttle \$t:
+		$XMRSTAK --throttle \$t --exitSeconds 120 
+        done
+	$XMRSTAK
+"
+
+
