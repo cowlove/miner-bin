@@ -1,0 +1,8 @@
+#!/bin/sh -x
+M=`miner-name $1`
+if ! [ -f /tmp/$M.no-reset ]; then 
+	miner-reallyreset $M
+else 
+	echo Not rebooting because of /tmp/$M.no-reset
+fi 
+

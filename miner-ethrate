@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# query ethminer api on port 13333
+#
+
+echo '{"id":0,"jsonrpc":"2.0","method":"miner_getstat1"}' | \
+	nc -w 5 $1 13333 | \
+	perl -ne 'if (m/dev0","\d+","(\d+)/){printf("%.2f\n",$1/1000);}'
+
+

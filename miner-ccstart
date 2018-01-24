@@ -1,0 +1,10 @@
+#/bin/bash -x
+
+# Script to start all the miner command and control screen(1) scripts
+
+cd ~
+miner-watchdog
+for m in 1 2 3 4; do 
+	miner-lognwatch miner$m
+done
+

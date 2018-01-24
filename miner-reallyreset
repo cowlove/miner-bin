@@ -1,0 +1,8 @@
+#!/bin/sh -x
+M=`miner-name $1`
+mosquitto_pub -t cmnd/sonoff_$M/power -m off;
+mosquitto_pub -t cmnd/sonoff_$M/power2 -m off;
+sleep 10;
+mosquitto_pub -t cmnd/sonoff_$M/power -m on
+mosquitto_pub -t cmnd/sonoff_$M/power2 -m on
+

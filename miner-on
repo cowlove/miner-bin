@@ -1,0 +1,5 @@
+#!/bin/sh -x
+#ssh jim-miner sudo reboot
+#sleep 10
+	mosquitto_pub -t cmnd/sonoff_$1/power -m on
+

@@ -1,0 +1,4 @@
+#!/bin/bash
+M=`miner-name $1`
+egrep '(RATES)|(responding)' ~/$M.out | egrep '(\(na)|( 0.0)' -A1 -B1 --color=always
+

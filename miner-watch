@@ -1,0 +1,6 @@
+#!/bin/bash
+M=`miner-name $1`
+while sleep 1; do
+	ssh -i ~/.ssh/id_nexus5 jim@$M tail -f out.log
+done
+ 

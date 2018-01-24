@@ -1,0 +1,6 @@
+#!/bin/bash
+# Start a screen(1) continually tailing the output of the miner's log
+cd ~
+screen -dm -S $1 script -af $1.out -c "miner-watch $1"
+#screen -dm -S $1-2 script -af $1-2.out -c "while sleep 1; do ssh $1 tail -f out2.log; done"
+

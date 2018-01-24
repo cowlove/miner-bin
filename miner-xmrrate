@@ -1,0 +1,5 @@
+#!/bin/bash
+
+wget --timeout=4 --tries=3 -q -O - http://$1:8088| \
+	perl -ne 'if (m|Totals:</th><td>\W*([0-9.]+)|){print "$1\n";}'
+

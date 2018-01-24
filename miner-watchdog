@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# Start a screen(1) with the miner watchdog
+
+cd ~
+screen -S watchdog script -af watchdog.out -c "paho-mqtt/bin/python ./bin/miner-watchdog.py"
+
+
+
+

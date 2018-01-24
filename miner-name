@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo $1 | perl -ne 'if (/(\d+)/) {print "miner$1\n"};'
+
