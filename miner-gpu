@@ -1,0 +1,5 @@
+#!/bin/bash
+
+sudo bash -c 'cat /sys/kernel/debug/dri/?/amdgpu_pm_info' | grep --color=always 'GPU' | grep -v Load
+
+
